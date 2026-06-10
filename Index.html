@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ایران خودرو | فروشگاه رسمی</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- CURSOR GLOW -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">IKCO STORE</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  <div style="color:var(--gray);font-size:0.8rem">در حال بارگذاری...</div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker" style="margin-top:70px">
+  <div class="ticker-inner" id="tickerInner"></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <a href="#" class="header-logo">
+    <div class="logo-icon">IK</div>
+    <div>
+      <div class="logo-text">ایران خودرو</div>
+      <div class="logo-sub">IRAN KHODRO CO.</div>
+    </div>
+  </a>
+  <nav>
+    <a href="#" class="active">خانه</a>
+    <a href="#products">محصولات</a>
+    <a href="#presale">پیش‌فروش</a>
+    <a href="#festivals">جشنواره‌ها</a>
+    <a href="#payment">پرداخت ارزی</a>
+    <a href="#">نمایندگی‌ها</a>
+    <a href="#">تماس</a>
+  </nav>
+  <div class="header-actions">
+    <button class="btn-login" id="btnLogin">ورود / ثبت‌نام</button>
+    <div class="btn-cart" id="cartIconBtn">
+      🛒
+      <div class="cart-badge" id="cartBadge">0</div>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-badge"><span></span> جشنواره تابستانی ۱۴۰۵ فعال است</div>
+      <h1 class="hero-title">
+        فروشگاه رسمی<br>
+        <span class="accent">ایران خودرو</span><br>
+        <span class="gold">با قیمت استثنایی</span>
+      </h1>
+      <p class="hero-desc">
+        خرید مستقیم از کارخانه با ضمانت اصالت کالا، امکان پرداخت با تون‌کوین و پیش‌فروش اقساطی با تخفیف‌های ویژه فصلی
+      </p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">مشاهده محصولات ←</button>
+        <button class="btn-secondary" onclick="document.getElementById('presale').scrollIntoView({behavior:'smooth'})">پیش‌فروش ویژه</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">۲۰<span>+</span></div>
+          <div class="stat-label">مدل خودرو</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">۵۰<span>K+</span></div>
+          <div class="stat-label">مشتری راضی</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">۱۵<span>%</span></div>
+          <div class="stat-label">تخفیف تابستانی</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">TON</div>
+          <div class="stat-label">پرداخت ارزی</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-car-card">
+        <div class="featured-tag">⭐ پرفروش‌ترین</div>
+        <div class="car-display">🚗</div>
+        <div class="car-name">پژو پارس سال </div>
+        <div class="car-specs-row">
+          <span class="car-spec">۱۶۰۰ سی‌سی</span>
+          <span class="car-spec">دستی</span>
+          <span class="car-spec">دنده۵</span>
+        </div>
+        <div class="car-price-row">
+          <div>
+            <div class="car-price">۱,۸۵۰,۰۰۰,۰۰۰ تومان</div>
+            <div class="car-price-old">۲,۰۰۰,۰۰۰,۰۰۰ تومان</div>
+          </div>
+          <div class="discount-badge">-۱۵٪ تخفیف</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FESTIVALS -->
+<section class="festival reveal" id="festivals">
+  <div class="festival-title-row">
+    <h2 class="section-title">🎉 جشنواره‌های <span>تخفیف فصلی</span></h2>
+    <span class="see-all">مشاهده همه →</span>
+  </div>
+  <div class="festival-grid">
+    <div class="festival-card summer" onclick="showNotif('جشنواره تابستانی فعال شد!','☀️')">
+      <span class="festival-emoji">☀️</span>
+      <div class="festival-season">جشنواره تابستانی</div>
+      <div class="festival-discount">تا ۱۵٪</div>
+      <div class="festival-desc">تخفیف ویژه بر روی تمام مدل‌های سواری</div>
+      <div class="festival-timer">
+        <div class="timer-block"><div class="timer-num" id="t1d">۱۲</div><div class="timer-label">روز</div></div>
+        <div class="timer-block"><div class="timer-num" id="t1h">۰۵</div><div class="timer-label">ساعت</div></div>
+        <div class="timer-block"><div class="timer-num" id="t1m">۳۴</div><div class="timer-label">دقیقه</div></div>
+      </div>
+    </div>
+    <div class="festival-card autumn" onclick="showNotif('جشنواره پاییزی ثبت‌نام شد!','🍂')">
+      <span class="festival-emoji">🍂</span>
+      <div class="festival-season">جشنواره پاییزی</div>
+      <div class="festival-discount">تا ۱۲٪</div>
+      <div class="festival-desc">شرایط ویژه اقساط بلندمدت</div>
+      <div class="festival-timer">
+        <div class="timer-block"><div class="timer-num">۴۵</div><div class="timer-label">روز</div></div>
+        <div class="timer-block"><div class="timer-num">۱۲</div><div class="timer-label">ساعت</div></div>
+        <div class="timer-block"><div class="timer-num">۰۸</div><div class="timer-label">دقیقه</div></div>
+      </div>
+    </div>
+    <div class="festival-card winter" onclick="showNotif('ثبت‌نام جشنواره زمستانی انجام شد!','❄️')">
+      <span class="festival-emoji">❄️</span>
+      <div class="festival-season">جشنواره زمستانی</div>
+      <div class="festival-discount">تا ۲۰٪</div>
+      <div class="festival-desc">بزرگ‌ترین رویداد فروش سال</div>
+      <div class="festival-timer">
+        <div class="timer-block"><div class="timer-num">۹۸</div><div class="timer-label">روز</div></div>
+        <div class="timer-block"><div class="timer-num">۲۱</div><div class="timer-label">ساعت</div></div>
+        <div class="timer-block"><div class="timer-num">۵۵</div><div class="timer-label">دقیقه</div></div>
+      </div>
+    </div>
+    <div class="festival-card spring" onclick="showNotif('جشنواره بهاری فعال شد!','🌸')">
+      <span class="festival-emoji">🌸</span>
+      <div class="festival-season">جشنواره بهاری</div>
+      <div class="festival-discount">تا ۱۰٪</div>
+      <div class="festival-desc">جشن نوروز با هدایای ویژه</div>
+      <div class="festival-timer">
+        <div class="timer-block"><div class="timer-num">۲۷۰</div><div class="timer-label">روز</div></div>
+        <div class="timer-block"><div class="timer-num">۰۰</div><div class="timer-label">ساعت</div></div>
+        <div class="timer-block"><div class="timer-num">۰۰</div><div class="timer-label">دقیقه</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products-section reveal" id="products">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+    <h2 class="section-title">🚗 محصولات <span>ایران خودرو</span></h2>
+    <span class="see-all">مشاهده همه محصولات →</span>
+  </div>
+  <div class="products-tabs">
+    <button class="tab active" onclick="filterProducts(this,'all')">همه</button>
+    <button class="tab" onclick="filterProducts(this,'sedan')">سواری</button>
+    <button class="tab" onclick="filterProducts(this,'suv')">شاسی‌بلند</button>
+    <button class="tab" onclick="filterProducts(this,'hatch')">هاچ‌بک</button>
+    <button class="tab" onclick="filterProducts(this,'electric')">برقی</button>
+  </div>
+  <div class="products-grid" id="productsGrid">
+
+    <!-- PRODUCT 1 -->
+    <div class="product-card" data-cat="sedan">
+      <div class="product-img">
+         <img src="images/pars.webp" alt="pars" style="max-width: 100%; height: auto;">
+    
+        <div class="product-badges">
+          <span class="badge badge-hot">🔥 پرفروش</span>
+          <span class="badge badge-sale">۱۵٪ تخفیف</span>
+        </div>
+        <div class="wishlist-btn">♡</div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">پژو پارس سال</div>
+        <div class="product-eng">Pars TU5</div>
+        <div class="product-specs">
+          <span class="spec-tag">۱۶۰۰ سی‌سی</span>
+          <span class="spec-tag">دستی</span>
+          <span class="spec-tag">بنزینی</span>
+          <span class="spec-tag">۵ نفره</span>
+        </div>
+        <div class="product-pricing">
+          <div>
+            <div class="price-main">۱,۸۵۰,۰۰۰,۰۰۰ <span>تومان</span></div>
+            <div class="price-old">۲,۰۰۰,۰۰۰,۰۰۰ تومان</div>
+          </div>
+          <div class="price-discount">-۱۵٪</div>
+        </div>
+        <div class="ton-price">
+          <span class="ton-icon">💎</span>
+          <span class="ton-label">معادل تون‌کوین:</span>
+          <span class="ton-amount">≈ ۲,۸۵۰ TON</span>
+        </div>
+        <div class="product-actions">
+          <button class="btn-buy" class="btn-buy" data-id="1">خرید فوری</button>
+          <button class="btn-detail" data-id="1">ℹ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT 2 -->
+    <div class="product-card" data-cat="sedan">
+      <div class="product-img" style="background:linear-gradient(135deg,#1a2a1a,#0d1a0d)">
+        <img src="images/207.webp" alt="207" style="max-width: 100%; height: auto;">
+        <div class="product-badges">
+          <span class="badge badge-new">✨ جدید</span>
+        </div>
+        <div class="wishlist-btn">♡</div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">پژو ۲۰۷ اتوماتیک</div>
+        <div class="product-eng">PEUGEOT 207 AUTO</div>
+        <div class="product-specs">
+          <span class="spec-tag">۱۵۰۰ سی‌سی</span>
+          <span class="spec-tag">اتوماتیک CVT</span>
+          <span class="spec-tag">بنزینی</span>
+        </div>
+        <div class="product-pricing">
+          <div>
+            <div class="price-main">۱,۸۵۰,۰۰۰,۰۰۰ <span>تومان</span></div>
+            <div class="price-old">۲,۰۰۰,۰۰۰,۰۰۰ تومان</div>
+          </div>
+          <div class="price-discount">-۱۵٪</div>
+        </div>
+        <div class="ton-price">
+          <span class="ton-icon">💎</span>
+          <span class="ton-label">معادل تون‌کوین:</span>
+          <span class="ton-amount">≈ ۲,۴۸۰ TON</span>
+        </div>
+        <div class="product-actions">
+          <button class="btn-buy" class="btn-buy" data-id="2">خرید فوری</button>
+          <button class="btn-detail" data-id="2">ℹ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT 3 - SUV -->
+    <div class="product-card" data-cat="suv">
+      <div class="product-img" style="background:linear-gradient(135deg,#2a1a0a,#1a0d00)">
+        <img src="images/denaplusturbo.webp" alt="denaplusturbo" style="max-width: 100%; height: auto;">
+        <div class="product-badges">
+          <span class="badge badge-sale">۱۰٪ تخفیف</span>
+        </div>
+        <div class="wishlist-btn">♡</div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">دنا پلاس توربو</div>
+        <div class="product-eng">DENA PLUS TURBO</div>
+        <div class="product-specs">
+          <span class="spec-tag">۱۶۵۰ توربو</span>
+          <span class="spec-tag">اتوماتیک</span>
+          <span class="spec-tag">بنزینی</span>
+          <span class="spec-tag">سانروف</span>
+        </div>
+        <div class="product-pricing">
+          <div>
+            <div class="price-main">۲,۱۰۰,۰۰۰,۰۰۰ <span>تومان</span></div>
+            <div class="price-old">۲,۲۰۰,۰۰۰,۰۰۰ تومان</div>
+          </div>
+          <div class="price-discount">-۱۰٪</div>
+        </div>
+        <div class="ton-price">
+          <span class="ton-icon">💎</span>
+          <span class="ton-label">معادل تون‌کوین:</span>
+          <span class="ton-amount">≈ ۳,۶۷۰ TON</span>
+        </div>
+        <div class="product-actions">
+          <button class="btn-buy" class="btn-buy" data-id="3">خرید فوری</button>
+          <button class="btn-detail" data-id="3">ℹ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT 4 -->
+    <div class="product-card" data-cat="sedan">
+      <div class="product-img" style="background:linear-gradient(135deg,#1a1a2a,#0d0d1a)">
+        <img src="images/405slx.webp" alt="405slx" style="max-width: 100%; height: auto;">
+        <div class="product-badges">
+          <span class="badge badge-hot">🔥 محدود</span>
+        </div>
+        <div class="wishlist-btn">♡</div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">پژو ۴۰۵ SLX</div>
+        <div class="product-eng">PEUGEOT 405 SLX</div>
+        <div class="product-specs">
+          <span class="spec-tag">۱۸۰۰ سی‌سی</span>
+          <span class="spec-tag">دستی ۵</span>
+          <span class="spec-tag">بنزینی</span>
+        </div>
+        <div class="product-pricing">
+          <div>
+            <div class="price-main">۱,۴۰۰,۰۰۰,۰۰۰ <span>تومان</span></div>
+            <div class="price-old">۱,۴۷۰,۰۰۰,۰۰۰ تومان</div>
+          </div>
+          <div class="price-discount">-۷٪</div>
+        </div>
+        <div class="ton-price">
+          <span class="ton-icon">💎</span>
+          <span class="ton-label">معادل تون‌کوین:</span>
+          <span class="ton-amount">≈ ۱,۲۷۰ TON</span>
+        </div>
+        <div class="product-actions">
+          <button class="btn-buy" class="btn-buy" data-id="4">خرید فوری</button>
+          <button class="btn-detail">ℹ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT 5 - HATCH -->
+    <div class="product-card" data-cat="hatch">
+      <div class="product-img" style="background:linear-gradient(135deg,#0a2a0a,#051a05)">
+        <img src="images/ranaplus.webp" alt="ranaplus" style="max-width: 100%; height: auto;">
+        <div class="product-badges">
+          <span class="badge badge-new">✨ مدل ۱۴۰۴</span>
+        </div>
+        <div class="wishlist-btn">♡</div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">رانا پلاس</div>
+        <div class="product-eng">RANA PLUS</div>
+        <div class="product-specs">
+          <span class="spec-tag">۱۵۰۰ سی‌سی</span>
+          <span class="spec-tag">اتوماتیک</span>
+          <span class="spec-tag">۵ درب</span>
+        </div>
+        <div class="product-pricing">
+          <div>
+            <div class="price-main">۱,۵۵۰,۰۰۰,۰۰۰ <span>تومان</span></div>
+            <div class="price-old">۱,۶۰۰,۰۰۰,۰۰۰ تومان</div>
+          </div>
+          <div class="price-discount">-۵٪</div>
+        </div>
+        <div class="ton-price">
+          <span class="ton-icon">💎</span>
+          <span class="ton-label">معادل تون‌کوین:</span>
+          <span class="ton-amount">≈ ۱,۸۷۰ TON</span>
+        </div>
+        <div class="product-actions">
+          <button class="btn-buy" class="btn-buy" data-id="5">خرید فوری</button>
+          <button class="btn-detail">ℹ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT 6 - ELECTRIC -->
+    <div class="product-card" data-cat="electric">
+      <div class="product-img" style="background:linear-gradient(135deg,#061525,#0a1e35)">
+        <img src="images/taraelectric.webp" alt="taraelectric" style="max-width: 100%; height: auto;">
+        <div class="product-badges">
+          <span class="badge badge-new">⚡ برقی</span>
+          <span class="badge badge-pre">پیش‌فروش</span>
+        </div>
+        <div class="wishlist-btn">♡</div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">تارا الکتریک</div>
+        <div class="product-eng">TARA ELECTRIC</div>
+        <div class="product-specs">
+          <span class="spec-tag">۱۵۰ کیلووات</span>
+          <span class="spec-tag">برقی ۱۰۰٪</span>
+          <span class="spec-tag">۴۵۰ کیلومتر</span>
+        </div>
+        <div class="product-pricing">
+          <div>
+            <div class="price-main">۲,۳۰۰,۰۰۰,۰۰۰ <span>تومان</span></div>
+            <div class="price-old">۲,۴۴۰,۰۰۰,۰۰۰ تومان</div>
+          </div>
+          <div class="price-discount">-۱۴٪</div>
+        </div>
+        <div class="ton-price">
+          <span class="ton-icon">💎</span>
+          <span class="ton-label">معادل تون‌کوین:</span>
+          <span class="ton-amount">≈ ۶,۰۰۰ TON</span>
+        </div>
+        <div class="product-actions">
+          <button class="btn-buy pre" class="btn-buy pre" data-id="6">ثبت پیش‌فروش</button>
+          <button class="btn-detail">ℹ</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PRESALE SECTION -->
+<section class="presale-section reveal" id="presale">
+  <div class="presale-banner">
+    <div class="presale-header">
+      <div class="presale-icon">📋</div>
+      <div class="presale-header-text">
+        <h2>پیش‌فروش ویژه ۱۴۰۵</h2>
+        <p>ثبت‌نام و پرداخت پیش‌قسط با شرایط اقساطی استثنایی</p>
+      </div>
+    </div>
+    <div class="presale-grid">
+      <div class="presale-card">
+        <div class="presale-car-img"><img src="images/taraelectric.webp" alt="taraelectric" style="max-width: 100%; height: auto;"></div>
+        <div class="presale-car-name">تارا پلاس اتوماتیک</div>
+        <div class="presale-status"><div class="status-dot"></div><div class="status-text">در حال ثبت‌نام • ۷۸٪ پر شده</div></div>
+        <div class="presale-progress"><div class="progress-fill" style="width:78%"></div></div>
+        <div class="presale-info"><span>۳,۹۰۰ ثبت‌نام</span><span>ظرفیت: ۵,۰۰۰</span></div>
+        <div class="presale-price">پیش‌قسط: ۱۰۰,۰۰۰,۰۰۰ تومان</div>
+        <button class="btn-presale" onclick="showNotif('ثبت‌نام پیش‌فروش تارا پلاس انجام شد!','✅')">ثبت‌نام پیش‌فروش</button>
+      </div>
+      <div class="presale-card">
+        <div class="presale-car-img"><img src="images/pars.webp" alt="pars" style="max-width: 100%; height: auto;"></div>
+        <div class="presale-car-name">پژو پارس سال</div>
+        <div class="presale-status"><div class="status-dot" style="background:#60CCFF"></div><div class="status-text" style="color:#60CCFF">ثبت‌نام آزاد • ۳۵٪ پر شده</div></div>
+        <div class="presale-progress"><div class="progress-fill" style="width:35%;background:linear-gradient(90deg,#0088CC,#00AAFF)"></div></div>
+        <div class="presale-info"><span>۱,۷۵۰ ثبت‌نام</span><span>ظرفیت: ۵,۰۰۰</span></div>
+        <div class="presale-price">پیش‌قسط: ۸۰,۰۰۰,۰۰۰ تومان</div>
+        <button class="btn-presale" style="border-color:rgba(0,136,204,0.4);color:#60CCFF" onclick="showNotif('ثبت‌نام پیش‌فروش پژو پارس سال  انجام شد!','✅')">ثبت‌نام پیش‌فروش</button>
+      </div>
+      <div class="presale-card">
+        <div class="presale-car-img">⚡</div>
+        <div class="presale-car-name">تارا الکتریک نسل ۲</div>
+        <div class="presale-status"><div class="status-dot" style="background:#40DD80"></div><div class="status-text" style="color:#40DD80">به زودی • اعلام آمادگی</div></div>
+        <div class="presale-progress"><div class="progress-fill" style="width:5%;background:linear-gradient(90deg,#00C851,#40FF90)"></div></div>
+        <div class="presale-info"><span>۲۵۰ اعلام آمادگی</span><span>ظرفیت: ۲,۰۰۰</span></div>
+        <div class="presale-price">پیش‌قسط: ۱۵۰,۰۰۰,۰۰۰ تومان</div>
+        <button class="btn-presale" style="border-color:rgba(0,200,80,0.4);color:#40DD80" onclick="showNotif('اعلام آمادگی شما ثبت شد!','✅')">اعلام آمادگی</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENT SECTION -->
+<section class="payment-section reveal" id="payment">
+  <div class="payment-banner">
+    <div style="position:relative">
+      <div class="payment-title">💎 پرداخت ارزی با <span style="color:#60CCFF">تون‌کوین</span></div>
+      <p class="payment-desc">
+        با استفاده از شبکه TON Blockchain، اکنون می‌توانید خودروی ایرانی خود را با ارز دیجیتال معتبر خریداری کنید. امن، سریع و بدون کارمزد اضافه.
+      </p>
+      <div class="payment-features">
+        <div class="payment-feature">
+          <div class="pf-icon">🔒</div>
+          <div class="pf-text">پرداخت امن و رمزنگاری‌شده با بلاک‌چین TON</div>
+        </div>
+        <div class="payment-feature">
+          <div class="pf-icon">⚡</div>
+          <div class="pf-text">تسویه آنی در کمتر از ۳ ثانیه</div>
+        </div>
+        <div class="payment-feature">
+          <div class="pf-icon">🌍</div>
+          <div class="pf-text">قابل استفاده برای ایرانیان خارج از کشور</div>
+        </div>
+        <div class="payment-feature">
+          <div class="pf-icon">💱</div>
+          <div class="pf-text">تبدیل خودکار نرخ لحظه‌ای به تومان</div>
+        </div>
+        <div class="payment-feature">
+          <div class="pf-icon">🎁</div>
+          <div class="pf-text">۳٪ تخفیف اضافه برای پرداخت با TON</div>
+        </div>
+      </div>
+    </div>
+    <div class="ton-widget" style="position:relative">
+      <div class="ton-header">
+        <div class="ton-logo">TON</div>
+        <div class="ton-header-text">
+          <h3>درگاه پرداخت TON</h3>
+          <p>پرداخت ارزی ایران خودرو</p>
+        </div>
+      </div>
+      <div class="ton-rate-display">
+        <div class="ton-rate-label">نرخ لحظه‌ای TON</div>
+        <div class="ton-rate-value" id="tonRate">۱ TON = ۲۹۸,۵۰۰ تومان</div>
+      </div>
+      <div class="ton-input-group">
+        <div class="ton-input-label">مبلغ به تومان</div>
+        <input class="ton-input" type="text" placeholder="مثال: ۸۵۰,۰۰۰,۰۰۰" id="tomInput" oninput="calcTon(this.value)" style="text-align:right">
+      </div>
+      <div class="ton-input-group">
+        <div class="ton-input-label">معادل تون‌کوین</div>
+        <input class="ton-input" type="text" id="tonOutput" placeholder="۰.۰۰ TON" readonly style="color:#60CCFF;text-align:right">
+      </div>
+      <div class="ton-input-group">
+        <div class="ton-input-label">آدرس کیف پول TON</div>
+        <input class="ton-input" type="text" placeholder="EQ... آدرس کیف پول خود را وارد کنید" style="text-align:left;direction:ltr;font-size:0.8rem">
+      </div>
+      <button class="btn-ton-pay" onclick="showNotif('اتصال به کیف پول TON...','💎')">
+        <span>💎</span>
+        <span>اتصال و پرداخت با TON Wallet</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section reveal">
+  <h2 class="section-title" style="margin-bottom:24px">✨ چرا ایران خودرو <span>آنلاین</span>؟</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🏭</div>
+      <div class="feature-title">مستقیم از کارخانه</div>
+      <div class="feature-desc">خرید بدون واسطه با قیمت کارخانه و ضمانت اصالت</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <div class="feature-title">ضمانت ۳ ساله</div>
+      <div class="feature-desc">گارانتی کامل کارخانه با پوشش تمام قطعات</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🚚</div>
+      <div class="feature-title">تحویل سراسری</div>
+      <div class="feature-desc">تحویل به تمام نقاط ایران در کمترین زمان ممکن</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💳</div>
+      <div class="feature-title">اقساط بلندمدت</div>
+      <div class="feature-desc">پرداخت اقساطی تا ۶۰ ماه با سود مناسب</div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal Login/Register -->
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('authModal')">&times;</span>
+        <div class="tab-buttons">
+            <button class="tab-btn active" id="loginTabBtn">ورود</button>
+            <button class="tab-btn" id="registerTabBtn">ثبت‌نام</button>
+        </div>
+        <div id="loginForm">
+            <div class="form-group"><input type="text" id="loginPhone" placeholder="شماره موبایل"></div>
+            <div class="form-group"><input type="password" id="loginPass" placeholder="رمز عبور"></div>
+            <button class="btn-primary-custom" style="width:100%;" onclick="handleLogin()">ورود به حساب</button>
+        </div>
+        <div id="registerForm" style="display:none;">
+            <div class="form-group"><input type="text" id="regName" placeholder="نام و نام خانوادگی"></div>
+            <div class="form-group"><input type="text" id="regPhone" placeholder="شماره موبایل"></div>
+            <div class="form-group"><input type="password" id="regPass" placeholder="رمز عبور"></div>
+            <button class="btn-primary-custom" style="width:100%;" onclick="handleRegister()">ثبت‌نام و ورود</button>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Modal -->
+<div id="cartModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('cartModal')">&times;</span>
+        <h2 style="margin-bottom:20px;">🛒 سبد خرید</h2>
+        <div id="cartItemsList" class="cart-items-list">سبد خرید شما خالی است</div>
+        <div class="cart-total" id="cartTotalAmount">جمع کل: ۰ تومان</div>
+        <button class="btn-primary-custom" style="width:100%; margin-top:20px;" onclick="checkout()">تکمیل خرید</button>
+        <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="closeModal('cartModal')">بستن</button>
+    </div>
+</div>
+
+<!-- Toast notif -->
+<div id="toastMsg" style="position:fixed; bottom:30px; left:30px; z-index:3000;"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="header-logo">
+        <div class="logo-icon">IK</div>
+        <div>
+          <div class="logo-text">ایران خودرو</div>
+          <div class="logo-sub">IRAN KHODRO CO.</div>
+        </div>
+      </div>
+      <p>ایران خودرو با بیش از ۵۵ سال سابقه، بزرگ‌ترین خودروساز ایران و یکی از معتبرترین برندهای خودروسازی خاورمیانه است.</p>
+      <div class="social-links">
+        <div class="social-btn" onclick="showNotif('اینستاگرام ایران خودرو','📸')">📸</div>
+        <div class="social-btn" onclick="showNotif('تلگرام ایران خودرو','✈️')">✈️</div>
+        <div class="social-btn" onclick="showNotif('توییتر ایران خودرو','🐦')">🐦</div>
+        <div class="social-btn" onclick="showNotif('یوتوب ایران خودرو','▶️')">▶️</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>محصولات</h4>
+      <ul>
+        <li><a href="#">سواری‌ها</a></li>
+        <li><a href="#">شاسی‌بلندها</a></li>
+        <li><a href="#">خودروهای برقی</a></li>
+        <li><a href="#">وانت و کامیونت</a></li>
+        <li><a href="#">قطعات یدکی</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>خدمات</h4>
+      <ul>
+        <li><a href="#">پیش‌فروش</a></li>
+        <li><a href="#">بیمه و ضمانت</a></li>
+        <li><a href="#">نمایندگی‌ها</a></li>
+        <li><a href="#">سرویس و نگهداری</a></li>
+        <li><a href="#">پرداخت ارزی TON</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>پشتیبانی</h4>
+      <ul>
+        <li><a href="#">راهنمای خرید</a></li>
+        <li><a href="#">سوالات متداول</a></li>
+        <li><a href="#">تماس با ما</a></li>
+        <li><a href="#">شکایات</a></li>
+        <li><a href="#">درباره ما</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© ۱۴۰۵ ایران خودرو. تمام حقوق محفوظ است.</div>
+    <div style="display:flex;gap:20px">
+      <span>حریم خصوصی</span>
+      <span>شرایط استفاده</span>
+      <span style="color:#60CCFF">💎 TON Payments Enabled</span>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closePurchaseModal()">✕</button>
+    <div class="modal-title">تکمیل خرید</div>
+    <div class="modal-car-preview">
+      <div class="modal-car-emoji" id="modalEmoji">🚗</div>
+      <div class="modal-car-info">
+        <h3 id="modalName"> پژو پارس سال</h3>
+        <p>ایران خودرو</p>
+        <div class="modal-price" id="modalPrice">۱,۸۵۰,۰۰۰,۰۰۰ تومان</div>
+      </div>
+    </div>
+    <div style="font-size:0.85rem;color:var(--gray);margin-bottom:12px;font-weight:600">انتخاب روش پرداخت:</div>
+    <div class="payment-methods">
+      <div class="payment-method selected" onclick="selectPayment(this)">
+        <span class="pm-icon">🏦</span>
+        <div><div class="pm-name">درگاه بانکی (شاپرک)</div><div class="pm-desc">پرداخت آنلاین از طریق تمام بانک‌های ایران</div></div>
+      </div>
+      <div class="payment-method ton-method" onclick="selectPayment(this)">
+        <span class="pm-icon">💎</span>
+        <div><div class="pm-name">پرداخت با TON Coin</div><div class="pm-desc">پرداخت ارزی + ۳٪ تخفیف اضافه</div></div>
+      </div>
+      <div class="payment-method" onclick="selectPayment(this)">
+        <span class="pm-icon">🏧</span>
+        <div><div class="pm-name">اقساط بانکی</div><div class="pm-desc">تا ۶۰ ماه با سود ۱۸٪</div></div>
+      </div>
+    </div>
+    <button class="btn-confirm-pay" onclick="confirmPurchase()">تأیید و ادامه پرداخت ←</button>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notification" id="notification">
+  <span class="notif-icon" id="notifIcon">✅</span>
+  <span class="notif-text" id="notifText">عملیات موفق بود</span>
+</div>
+<script src="js/script.js"></script>
+</body>
+</html>
