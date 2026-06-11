@@ -2,675 +2,1069 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ایران خودرو | فروشگاه رسمی</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>فروشگاه رسمی ایران خودرو | IKCO | پرداخت با TON</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+<style>
+:root {
+    --red: #C8102E;
+    --red-dark: #9B0020;
+    --gold: #D4A017;
+    --gold-light: #F0C040;
+    --dark: #0A0A0F;
+    --dark2: #12121A;
+    --dark3: #1A1A28;
+    --gray: #8888AA;
+    --white: #F5F5FF;
+    --ton: #0088CC;
+    --green: #00C851;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--dark);
+    color: var(--white);
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dark2); }
+::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+
+/* لودر */
+#loader {
+    position: fixed; inset: 0;
+    background: var(--dark);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    transition: opacity 0.5s;
+}
+#loader.hidden { opacity: 0; visibility: hidden; }
+.loader-logo {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--red);
+    animation: pulse 1s infinite alternate;
+}
+.loader-bar {
+    width: 200px; height: 3px;
+    background: var(--dark3);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.loader-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), var(--gold));
+    animation: loadbar 1.5s forwards;
+}
+@keyframes loadbar { 0%{width:0} 100%{width:100%} }
+@keyframes pulse { from{opacity:0.6} to{opacity:1} }
+
+/* تیکر */
+.ticker {
+    background: var(--red);
+    padding: 8px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+.ticker-inner {
+    display: inline-flex;
+    animation: ticker 30s linear infinite;
+}
+.ticker-item { padding: 0 40px; font-size: 0.8rem; font-weight: 500; }
+.ticker-sep { color: rgba(255,255,255,0.4); margin: 0 10px; }
+@keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+/* هدر */
+header {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(10,10,15,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 0 40px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+}
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: white;
+}
+.logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: white;
+    box-shadow: 0 4px 15px rgba(200,16,46,0.4);
+}
+.logo-text { font-weight: 800; font-size: 1.2rem; }
+.logo-sub { font-size: 0.65rem; color: var(--gray); margin-top: -2px; }
+nav { display: flex; gap: 8px; }
+nav a {
+    color: var(--gray);
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+nav a:hover, nav a.active { color: var(--red); background: rgba(200,16,46,0.1); }
+.header-actions { display: flex; gap: 10px; align-items: center; }
+.btn-login {
+    padding: 8px 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Vazirmatn', sans-serif;
+}
+.btn-login:hover { border-color: var(--red); color: var(--red); }
+.btn-cart {
+    position: relative;
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+.btn-cart:hover { background: var(--red); }
+.cart-badge {
+    position: absolute; top: -6px; right: -6px;
+    background: var(--gold);
+    color: black;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.7rem;
+}
+
+/* Hero */
+.hero {
+    min-height: 100vh;
+    padding-top: 70px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+.hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 120%, rgba(200,16,46,0.2) 0%, transparent 70%);
+}
+.hero-content {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(200,16,46,0.15);
+    border: 1px solid rgba(200,16,46,0.3);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--red);
+    margin-bottom: 20px;
+}
+.hero-title {
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+.hero-title .accent { color: var(--red); }
+.hero-title .gold { color: var(--gold); }
+.hero-desc {
+    color: var(--gray);
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+.btn-primary {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+    font-family: 'Vazirmatn', sans-serif;
+}
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary {
+    padding: 14px 28px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    margin-right: 12px;
+    font-family: 'Vazirmatn', sans-serif;
+}
+.hero-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+.stat-num { font-size: 1.8rem; font-weight: 800; }
+.stat-num span { color: var(--red); }
+.stat-label { font-size: 0.75rem; color: var(--gray); }
+.hero-car-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 30px;
+    text-align: center;
+}
+.car-display { font-size: 6rem; margin-bottom: 20px; }
+.car-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
+.car-specs { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; }
+.car-spec { font-size: 0.7rem; background: var(--dark3); padding: 4px 10px; border-radius: 20px; }
+.car-price { font-size: 1.3rem; font-weight: 800; color: var(--red); }
+.car-price-old { font-size: 0.8rem; text-decoration: line-through; color: var(--gray); }
+.discount-badge {
+    display: inline-block;
+    background: rgba(200,16,46,0.15);
+    color: var(--red);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    margin-top: 10px;
+}
+
+/* محصولات */
+.products-section {
+    padding: 60px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.section-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+}
+.section-title span { color: var(--red); }
+.products-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+.tab {
+    padding: 8px 24px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 30px;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Vazirmatn', sans-serif;
+}
+.tab.active {
+    background: var(--red);
+    color: white;
+    border-color: var(--red);
+}
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+.product-card {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--red);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.product-img {
+    height: 180px;
+    background: linear-gradient(135deg, var(--dark3), var(--dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    position: relative;
+}
+.product-badges {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 6px;
+}
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.badge-sale { background: var(--red); color: white; }
+.badge-new { background: var(--green); color: white; }
+.badge-pre { background: var(--gold); color: black; }
+.product-info { padding: 20px; }
+.product-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; }
+.product-eng { font-size: 0.7rem; color: var(--gray); margin-bottom: 10px; }
+.product-specs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.spec-tag {
+    font-size: 0.7rem;
+    background: var(--dark3);
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: var(--gray);
+}
+.price-main { font-size: 1.2rem; font-weight: 800; color: var(--red); }
+.price-old { font-size: 0.7rem; text-decoration: line-through; color: var(--gray); }
+.ton-price {
+    background: rgba(0,136,204,0.1);
+    padding: 8px 12px;
+    border-radius: 10px;
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+.btn-buy {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    font-family: 'Vazirmatn', sans-serif;
+}
+.btn-buy:hover { opacity: 0.9; }
+
+/* پیش‌فروش */
+.presale-section {
+    padding: 60px 40px;
+    background: linear-gradient(135deg, #0a1a2a, #051525);
+}
+.presale-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 30px;
+}
+.presale-card {
+    background: var(--dark2);
+    border: 1px solid rgba(212,160,23,0.3);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+}
+.presale-car-img { font-size: 3rem; margin-bottom: 15px; }
+.presale-car-name { font-size: 1.1rem; font-weight: 700; }
+.presale-status { color: var(--gold); font-size: 0.8rem; margin: 10px 0; }
+.presale-progress {
+    background: var(--dark3);
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    width: 0%;
+    border-radius: 3px;
+}
+.presale-price { font-size: 1rem; font-weight: 700; color: var(--gold); margin: 10px 0; }
+.btn-presale {
+    width: 100%;
+    padding: 10px;
+    background: rgba(212,160,23,0.15);
+    border: 1px solid rgba(212,160,23,0.3);
+    border-radius: 10px;
+    color: var(--gold);
+    cursor: pointer;
+    font-family: 'Vazirmatn', sans-serif;
+}
+.btn-presale:hover { background: rgba(212,160,23,0.3); }
+
+/* پرداخت TON */
+.payment-section {
+    padding: 60px 40px;
+    background: linear-gradient(135deg, #061525, #0A1E35);
+}
+.payment-banner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+.ton-widget {
+    background: var(--dark);
+    border: 1px solid rgba(0,136,204,0.3);
+    border-radius: 24px;
+    padding: 30px;
+}
+.ton-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+.ton-logo {
+    width: 50px; height: 50px;
+    background: linear-gradient(135deg, var(--ton), #0066AA);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+.ton-rate-value { font-size: 1.4rem; font-weight: 800; color: #60CCFF; margin: 15px 0; }
+.ton-input {
+    width: 100%;
+    padding: 12px;
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: white;
+    margin: 10px 0;
+    font-family: 'Vazirmatn', sans-serif;
+}
+.btn-ton-pay {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--ton), #0066AA);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 15px;
+    font-family: 'Vazirmatn', sans-serif;
+}
+.features-section {
+    padding: 60px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+.feature-card {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+}
+footer {
+    background: var(--dark2);
+    padding: 50px 40px 30px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+.footer-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+}
+.footer-col h4 { margin-bottom: 15px; font-size: 1rem; }
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 8px; }
+.footer-col a { color: var(--gray); text-decoration: none; font-size: 0.85rem; cursor: pointer; }
+.footer-col a:hover { color: var(--red); }
+.social-links { display: flex; gap: 10px; margin-top: 15px; }
+.social-btn {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 30px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    color: var(--gray);
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+/* مودال‌ها */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal-content {
+    background: linear-gradient(135deg, var(--dark2), var(--dark3));
+    border-radius: 32px;
+    padding: 32px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    animation: modalFadeIn 0.3s ease;
+}
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.95);}
+    to { opacity: 1; transform: scale(1);}
+}
+.close-modal {
+    float: left;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--gray);
+}
+.close-modal:hover { color: var(--red); }
+.tab-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+}
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    color: var(--gray);
+    cursor: pointer;
+    font-weight: 600;
+}
+.tab-btn.active {
+    color: var(--red);
+    background: rgba(200,16,46,0.1);
+    border-radius: 10px;
+}
+.modal-content input {
+    width: 100%;
+    padding: 14px;
+    margin: 12px 0;
+    background: var(--dark);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    color: white;
+}
+.modal-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.modal-btn-primary {
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    color: white;
+}
+.modal-btn-secondary {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--gray);
+}
+.cart-items-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-wrap: wrap;
+}
+.cart-item-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.cart-qty-btn {
+    width: 30px;
+    height: 30px;
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    cursor: pointer;
+}
+.cart-qty-btn:hover { background: var(--red); }
+.cart-remove-btn {
+    background: rgba(200,16,46,0.2);
+    border: 1px solid rgba(200,16,46,0.3);
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+.cart-total {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 20px 0;
+    text-align: left;
+}
+.notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--dark2);
+    border: 1px solid var(--green);
+    border-radius: 14px;
+    padding: 14px 22px;
+    display: flex;
+    gap: 12px;
+    transform: translateX(400px);
+    transition: transform 0.3s;
+    z-index: 1100;
+}
+.notification.show { transform: translateX(0); }
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+@media (max-width: 768px) {
+    header { padding: 0 20px; }
+    nav { display: none; }
+    .hero-content { grid-template-columns: 1fr; }
+    .products-grid, .presale-grid, .features-grid { grid-template-columns: 1fr; }
+    .payment-banner { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .hero-title { font-size: 2rem; }
+}
+</style>
 </head>
 <body>
 
-<!-- CURSOR GLOW -->
-<div class="cursor-glow" id="cursorGlow"></div>
-
-<!-- LOADER -->
 <div id="loader">
-  <div class="loader-logo">IKCO STORE</div>
-  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
-  <div style="color:var(--gray);font-size:0.8rem">در حال بارگذاری...</div>
+    <div class="loader-logo">IKCO STORE</div>
+    <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    <div style="color:var(--gray)">بارگذاری فروشگاه رسمی ایران خودرو...</div>
 </div>
 
-<!-- TICKER -->
-<div class="ticker" style="margin-top:70px">
-  <div class="ticker-inner" id="tickerInner"></div>
-</div>
+<div class="ticker"><div class="ticker-inner" id="tickerInner"></div></div>
 
-<!-- HEADER -->
 <header>
-  <a href="#" class="header-logo">
-    <div class="logo-icon">IK</div>
-    <div>
-      <div class="logo-text">ایران خودرو</div>
-      <div class="logo-sub">IRAN KHODRO CO.</div>
+    <a href="#" class="header-logo" id="homeLink">
+        <div class="logo-icon">IK</div>
+        <div><div class="logo-text">ایران خودرو</div><div class="logo-sub">IRAN KHODRO CO.</div></div>
+    </a>
+    <nav>
+        <a href="#products" class="nav-link">محصولات</a>
+        <a href="#presale" class="nav-link">پیش‌فروش</a>
+        <a href="#payment" class="nav-link">پرداخت TON</a>
+        <a href="#features" class="nav-link">مزایا</a>
+        <a href="#contact" class="nav-link" id="contactLink">تماس با ما</a>
+    </nav>
+    <div class="header-actions">
+        <button class="btn-login" id="btnLogin">ورود / ثبت‌نام</button>
+        <div class="btn-cart" id="cartBtn">🛒<div class="cart-badge" id="cartBadge">0</div></div>
     </div>
-  </a>
-  <nav>
-    <a href="#" class="active">خانه</a>
-    <a href="#products">محصولات</a>
-    <a href="#presale">پیش‌فروش</a>
-    <a href="#festivals">جشنواره‌ها</a>
-    <a href="#payment">پرداخت ارزی</a>
-    <a href="#">نمایندگی‌ها</a>
-    <a href="#">تماس</a>
-  </nav>
-  <div class="header-actions">
-    <button class="btn-login" id="btnLogin">ورود / ثبت‌نام</button>
-    <div class="btn-cart" id="cartIconBtn">
-      🛒
-      <div class="cart-badge" id="cartBadge">0</div>
-    </div>
-  </div>
 </header>
 
-<!-- HERO -->
 <section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <div>
-      <div class="hero-badge"><span></span> جشنواره تابستانی ۱۴۰۵ فعال است</div>
-      <h1 class="hero-title">
-        فروشگاه رسمی<br>
-        <span class="accent">ایران خودرو</span><br>
-        <span class="gold">با قیمت استثنایی</span>
-      </h1>
-      <p class="hero-desc">
-        خرید مستقیم از کارخانه با ضمانت اصالت کالا، امکان پرداخت با تون‌کوین و پیش‌فروش اقساطی با تخفیف‌های ویژه فصلی
-      </p>
-      <div class="hero-btns">
-        <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">مشاهده محصولات ←</button>
-        <button class="btn-secondary" onclick="document.getElementById('presale').scrollIntoView({behavior:'smooth'})">پیش‌فروش ویژه</button>
-      </div>
-      <div class="hero-stats">
-        <div class="stat">
-          <div class="stat-num">۲۰<span>+</span></div>
-          <div class="stat-label">مدل خودرو</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num">۵۰<span>K+</span></div>
-          <div class="stat-label">مشتری راضی</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num">۱۵<span>%</span></div>
-          <div class="stat-label">تخفیف تابستانی</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num">TON</div>
-          <div class="stat-label">پرداخت ارزی</div>
-        </div>
-      </div>
-    </div>
-    <div class="hero-visual">
-      <div class="hero-car-card">
-        <div class="featured-tag">⭐ پرفروش‌ترین</div>
-        <div class="car-display">🚗</div>
-        <div class="car-name">پژو پارس سال </div>
-        <div class="car-specs-row">
-          <span class="car-spec">۱۶۰۰ سی‌سی</span>
-          <span class="car-spec">دستی</span>
-          <span class="car-spec">دنده۵</span>
-        </div>
-        <div class="car-price-row">
-          <div>
-            <div class="car-price">۱,۸۵۰,۰۰۰,۰۰۰ تومان</div>
-            <div class="car-price-old">۲,۰۰۰,۰۰۰,۰۰۰ تومان</div>
-          </div>
-          <div class="discount-badge">-۱۵٪ تخفیف</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FESTIVALS -->
-<section class="festival reveal" id="festivals">
-  <div class="festival-title-row">
-    <h2 class="section-title">🎉 جشنواره‌های <span>تخفیف فصلی</span></h2>
-    <span class="see-all">مشاهده همه →</span>
-  </div>
-  <div class="festival-grid">
-    <div class="festival-card summer" onclick="showNotif('جشنواره تابستانی فعال شد!','☀️')">
-      <span class="festival-emoji">☀️</span>
-      <div class="festival-season">جشنواره تابستانی</div>
-      <div class="festival-discount">تا ۱۵٪</div>
-      <div class="festival-desc">تخفیف ویژه بر روی تمام مدل‌های سواری</div>
-      <div class="festival-timer">
-        <div class="timer-block"><div class="timer-num" id="t1d">۱۲</div><div class="timer-label">روز</div></div>
-        <div class="timer-block"><div class="timer-num" id="t1h">۰۵</div><div class="timer-label">ساعت</div></div>
-        <div class="timer-block"><div class="timer-num" id="t1m">۳۴</div><div class="timer-label">دقیقه</div></div>
-      </div>
-    </div>
-    <div class="festival-card autumn" onclick="showNotif('جشنواره پاییزی ثبت‌نام شد!','🍂')">
-      <span class="festival-emoji">🍂</span>
-      <div class="festival-season">جشنواره پاییزی</div>
-      <div class="festival-discount">تا ۱۲٪</div>
-      <div class="festival-desc">شرایط ویژه اقساط بلندمدت</div>
-      <div class="festival-timer">
-        <div class="timer-block"><div class="timer-num">۴۵</div><div class="timer-label">روز</div></div>
-        <div class="timer-block"><div class="timer-num">۱۲</div><div class="timer-label">ساعت</div></div>
-        <div class="timer-block"><div class="timer-num">۰۸</div><div class="timer-label">دقیقه</div></div>
-      </div>
-    </div>
-    <div class="festival-card winter" onclick="showNotif('ثبت‌نام جشنواره زمستانی انجام شد!','❄️')">
-      <span class="festival-emoji">❄️</span>
-      <div class="festival-season">جشنواره زمستانی</div>
-      <div class="festival-discount">تا ۲۰٪</div>
-      <div class="festival-desc">بزرگ‌ترین رویداد فروش سال</div>
-      <div class="festival-timer">
-        <div class="timer-block"><div class="timer-num">۹۸</div><div class="timer-label">روز</div></div>
-        <div class="timer-block"><div class="timer-num">۲۱</div><div class="timer-label">ساعت</div></div>
-        <div class="timer-block"><div class="timer-num">۵۵</div><div class="timer-label">دقیقه</div></div>
-      </div>
-    </div>
-    <div class="festival-card spring" onclick="showNotif('جشنواره بهاری فعال شد!','🌸')">
-      <span class="festival-emoji">🌸</span>
-      <div class="festival-season">جشنواره بهاری</div>
-      <div class="festival-discount">تا ۱۰٪</div>
-      <div class="festival-desc">جشن نوروز با هدایای ویژه</div>
-      <div class="festival-timer">
-        <div class="timer-block"><div class="timer-num">۲۷۰</div><div class="timer-label">روز</div></div>
-        <div class="timer-block"><div class="timer-num">۰۰</div><div class="timer-label">ساعت</div></div>
-        <div class="timer-block"><div class="timer-num">۰۰</div><div class="timer-label">دقیقه</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRODUCTS -->
-<section class="products-section reveal" id="products">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-    <h2 class="section-title">🚗 محصولات <span>ایران خودرو</span></h2>
-    <span class="see-all">مشاهده همه محصولات →</span>
-  </div>
-  <div class="products-tabs">
-    <button class="tab active" onclick="filterProducts(this,'all')">همه</button>
-    <button class="tab" onclick="filterProducts(this,'sedan')">سواری</button>
-    <button class="tab" onclick="filterProducts(this,'suv')">شاسی‌بلند</button>
-    <button class="tab" onclick="filterProducts(this,'hatch')">هاچ‌بک</button>
-    <button class="tab" onclick="filterProducts(this,'electric')">برقی</button>
-  </div>
-  <div class="products-grid" id="productsGrid">
-
-    <!-- PRODUCT 1 -->
-    <div class="product-card" data-cat="sedan">
-      <div class="product-img">
-         <img src="images/pars.webp" alt="pars" style="max-width: 100%; height: auto;">
-    
-        <div class="product-badges">
-          <span class="badge badge-hot">🔥 پرفروش</span>
-          <span class="badge badge-sale">۱۵٪ تخفیف</span>
-        </div>
-        <div class="wishlist-btn">♡</div>
-      </div>
-      <div class="product-info">
-        <div class="product-name">پژو پارس سال</div>
-        <div class="product-eng">Pars TU5</div>
-        <div class="product-specs">
-          <span class="spec-tag">۱۶۰۰ سی‌سی</span>
-          <span class="spec-tag">دستی</span>
-          <span class="spec-tag">بنزینی</span>
-          <span class="spec-tag">۵ نفره</span>
-        </div>
-        <div class="product-pricing">
-          <div>
-            <div class="price-main">۱,۸۵۰,۰۰۰,۰۰۰ <span>تومان</span></div>
-            <div class="price-old">۲,۰۰۰,۰۰۰,۰۰۰ تومان</div>
-          </div>
-          <div class="price-discount">-۱۵٪</div>
-        </div>
-        <div class="ton-price">
-          <span class="ton-icon">💎</span>
-          <span class="ton-label">معادل تون‌کوین:</span>
-          <span class="ton-amount">≈ ۲,۸۵۰ TON</span>
-        </div>
-        <div class="product-actions">
-          <button class="btn-buy" class="btn-buy" data-id="1">خرید فوری</button>
-          <button class="btn-detail" data-id="1">ℹ</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRODUCT 2 -->
-    <div class="product-card" data-cat="sedan">
-      <div class="product-img" style="background:linear-gradient(135deg,#1a2a1a,#0d1a0d)">
-        <img src="images/207.webp" alt="207" style="max-width: 100%; height: auto;">
-        <div class="product-badges">
-          <span class="badge badge-new">✨ جدید</span>
-        </div>
-        <div class="wishlist-btn">♡</div>
-      </div>
-      <div class="product-info">
-        <div class="product-name">پژو ۲۰۷ اتوماتیک</div>
-        <div class="product-eng">PEUGEOT 207 AUTO</div>
-        <div class="product-specs">
-          <span class="spec-tag">۱۵۰۰ سی‌سی</span>
-          <span class="spec-tag">اتوماتیک CVT</span>
-          <span class="spec-tag">بنزینی</span>
-        </div>
-        <div class="product-pricing">
-          <div>
-            <div class="price-main">۱,۸۵۰,۰۰۰,۰۰۰ <span>تومان</span></div>
-            <div class="price-old">۲,۰۰۰,۰۰۰,۰۰۰ تومان</div>
-          </div>
-          <div class="price-discount">-۱۵٪</div>
-        </div>
-        <div class="ton-price">
-          <span class="ton-icon">💎</span>
-          <span class="ton-label">معادل تون‌کوین:</span>
-          <span class="ton-amount">≈ ۲,۴۸۰ TON</span>
-        </div>
-        <div class="product-actions">
-          <button class="btn-buy" class="btn-buy" data-id="2">خرید فوری</button>
-          <button class="btn-detail" data-id="2">ℹ</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRODUCT 3 - SUV -->
-    <div class="product-card" data-cat="suv">
-      <div class="product-img" style="background:linear-gradient(135deg,#2a1a0a,#1a0d00)">
-        <img src="images/denaplusturbo.webp" alt="denaplusturbo" style="max-width: 100%; height: auto;">
-        <div class="product-badges">
-          <span class="badge badge-sale">۱۰٪ تخفیف</span>
-        </div>
-        <div class="wishlist-btn">♡</div>
-      </div>
-      <div class="product-info">
-        <div class="product-name">دنا پلاس توربو</div>
-        <div class="product-eng">DENA PLUS TURBO</div>
-        <div class="product-specs">
-          <span class="spec-tag">۱۶۵۰ توربو</span>
-          <span class="spec-tag">اتوماتیک</span>
-          <span class="spec-tag">بنزینی</span>
-          <span class="spec-tag">سانروف</span>
-        </div>
-        <div class="product-pricing">
-          <div>
-            <div class="price-main">۲,۱۰۰,۰۰۰,۰۰۰ <span>تومان</span></div>
-            <div class="price-old">۲,۲۰۰,۰۰۰,۰۰۰ تومان</div>
-          </div>
-          <div class="price-discount">-۱۰٪</div>
-        </div>
-        <div class="ton-price">
-          <span class="ton-icon">💎</span>
-          <span class="ton-label">معادل تون‌کوین:</span>
-          <span class="ton-amount">≈ ۳,۶۷۰ TON</span>
-        </div>
-        <div class="product-actions">
-          <button class="btn-buy" class="btn-buy" data-id="3">خرید فوری</button>
-          <button class="btn-detail" data-id="3">ℹ</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRODUCT 4 -->
-    <div class="product-card" data-cat="sedan">
-      <div class="product-img" style="background:linear-gradient(135deg,#1a1a2a,#0d0d1a)">
-        <img src="images/405slx.webp" alt="405slx" style="max-width: 100%; height: auto;">
-        <div class="product-badges">
-          <span class="badge badge-hot">🔥 محدود</span>
-        </div>
-        <div class="wishlist-btn">♡</div>
-      </div>
-      <div class="product-info">
-        <div class="product-name">پژو ۴۰۵ SLX</div>
-        <div class="product-eng">PEUGEOT 405 SLX</div>
-        <div class="product-specs">
-          <span class="spec-tag">۱۸۰۰ سی‌سی</span>
-          <span class="spec-tag">دستی ۵</span>
-          <span class="spec-tag">بنزینی</span>
-        </div>
-        <div class="product-pricing">
-          <div>
-            <div class="price-main">۱,۴۰۰,۰۰۰,۰۰۰ <span>تومان</span></div>
-            <div class="price-old">۱,۴۷۰,۰۰۰,۰۰۰ تومان</div>
-          </div>
-          <div class="price-discount">-۷٪</div>
-        </div>
-        <div class="ton-price">
-          <span class="ton-icon">💎</span>
-          <span class="ton-label">معادل تون‌کوین:</span>
-          <span class="ton-amount">≈ ۱,۲۷۰ TON</span>
-        </div>
-        <div class="product-actions">
-          <button class="btn-buy" class="btn-buy" data-id="4">خرید فوری</button>
-          <button class="btn-detail">ℹ</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRODUCT 5 - HATCH -->
-    <div class="product-card" data-cat="hatch">
-      <div class="product-img" style="background:linear-gradient(135deg,#0a2a0a,#051a05)">
-        <img src="images/ranaplus.webp" alt="ranaplus" style="max-width: 100%; height: auto;">
-        <div class="product-badges">
-          <span class="badge badge-new">✨ مدل ۱۴۰۴</span>
-        </div>
-        <div class="wishlist-btn">♡</div>
-      </div>
-      <div class="product-info">
-        <div class="product-name">رانا پلاس</div>
-        <div class="product-eng">RANA PLUS</div>
-        <div class="product-specs">
-          <span class="spec-tag">۱۵۰۰ سی‌سی</span>
-          <span class="spec-tag">اتوماتیک</span>
-          <span class="spec-tag">۵ درب</span>
-        </div>
-        <div class="product-pricing">
-          <div>
-            <div class="price-main">۱,۵۵۰,۰۰۰,۰۰۰ <span>تومان</span></div>
-            <div class="price-old">۱,۶۰۰,۰۰۰,۰۰۰ تومان</div>
-          </div>
-          <div class="price-discount">-۵٪</div>
-        </div>
-        <div class="ton-price">
-          <span class="ton-icon">💎</span>
-          <span class="ton-label">معادل تون‌کوین:</span>
-          <span class="ton-amount">≈ ۱,۸۷۰ TON</span>
-        </div>
-        <div class="product-actions">
-          <button class="btn-buy" class="btn-buy" data-id="5">خرید فوری</button>
-          <button class="btn-detail">ℹ</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRODUCT 6 - ELECTRIC -->
-    <div class="product-card" data-cat="electric">
-      <div class="product-img" style="background:linear-gradient(135deg,#061525,#0a1e35)">
-        <img src="images/taraelectric.webp" alt="taraelectric" style="max-width: 100%; height: auto;">
-        <div class="product-badges">
-          <span class="badge badge-new">⚡ برقی</span>
-          <span class="badge badge-pre">پیش‌فروش</span>
-        </div>
-        <div class="wishlist-btn">♡</div>
-      </div>
-      <div class="product-info">
-        <div class="product-name">تارا الکتریک</div>
-        <div class="product-eng">TARA ELECTRIC</div>
-        <div class="product-specs">
-          <span class="spec-tag">۱۵۰ کیلووات</span>
-          <span class="spec-tag">برقی ۱۰۰٪</span>
-          <span class="spec-tag">۴۵۰ کیلومتر</span>
-        </div>
-        <div class="product-pricing">
-          <div>
-            <div class="price-main">۲,۳۰۰,۰۰۰,۰۰۰ <span>تومان</span></div>
-            <div class="price-old">۲,۴۴۰,۰۰۰,۰۰۰ تومان</div>
-          </div>
-          <div class="price-discount">-۱۴٪</div>
-        </div>
-        <div class="ton-price">
-          <span class="ton-icon">💎</span>
-          <span class="ton-label">معادل تون‌کوین:</span>
-          <span class="ton-amount">≈ ۶,۰۰۰ TON</span>
-        </div>
-        <div class="product-actions">
-          <button class="btn-buy pre" class="btn-buy pre" data-id="6">ثبت پیش‌فروش</button>
-          <button class="btn-detail">ℹ</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- PRESALE SECTION -->
-<section class="presale-section reveal" id="presale">
-  <div class="presale-banner">
-    <div class="presale-header">
-      <div class="presale-icon">📋</div>
-      <div class="presale-header-text">
-        <h2>پیش‌فروش ویژه ۱۴۰۵</h2>
-        <p>ثبت‌نام و پرداخت پیش‌قسط با شرایط اقساطی استثنایی</p>
-      </div>
-    </div>
-    <div class="presale-grid">
-      <div class="presale-card">
-        <div class="presale-car-img"><img src="images/taraelectric.webp" alt="taraelectric" style="max-width: 100%; height: auto;"></div>
-        <div class="presale-car-name">تارا پلاس اتوماتیک</div>
-        <div class="presale-status"><div class="status-dot"></div><div class="status-text">در حال ثبت‌نام • ۷۸٪ پر شده</div></div>
-        <div class="presale-progress"><div class="progress-fill" style="width:78%"></div></div>
-        <div class="presale-info"><span>۳,۹۰۰ ثبت‌نام</span><span>ظرفیت: ۵,۰۰۰</span></div>
-        <div class="presale-price">پیش‌قسط: ۱۰۰,۰۰۰,۰۰۰ تومان</div>
-        <button class="btn-presale" onclick="showNotif('ثبت‌نام پیش‌فروش تارا پلاس انجام شد!','✅')">ثبت‌نام پیش‌فروش</button>
-      </div>
-      <div class="presale-card">
-        <div class="presale-car-img"><img src="images/pars.webp" alt="pars" style="max-width: 100%; height: auto;"></div>
-        <div class="presale-car-name">پژو پارس سال</div>
-        <div class="presale-status"><div class="status-dot" style="background:#60CCFF"></div><div class="status-text" style="color:#60CCFF">ثبت‌نام آزاد • ۳۵٪ پر شده</div></div>
-        <div class="presale-progress"><div class="progress-fill" style="width:35%;background:linear-gradient(90deg,#0088CC,#00AAFF)"></div></div>
-        <div class="presale-info"><span>۱,۷۵۰ ثبت‌نام</span><span>ظرفیت: ۵,۰۰۰</span></div>
-        <div class="presale-price">پیش‌قسط: ۸۰,۰۰۰,۰۰۰ تومان</div>
-        <button class="btn-presale" style="border-color:rgba(0,136,204,0.4);color:#60CCFF" onclick="showNotif('ثبت‌نام پیش‌فروش پژو پارس سال  انجام شد!','✅')">ثبت‌نام پیش‌فروش</button>
-      </div>
-      <div class="presale-card">
-        <div class="presale-car-img">⚡</div>
-        <div class="presale-car-name">تارا الکتریک نسل ۲</div>
-        <div class="presale-status"><div class="status-dot" style="background:#40DD80"></div><div class="status-text" style="color:#40DD80">به زودی • اعلام آمادگی</div></div>
-        <div class="presale-progress"><div class="progress-fill" style="width:5%;background:linear-gradient(90deg,#00C851,#40FF90)"></div></div>
-        <div class="presale-info"><span>۲۵۰ اعلام آمادگی</span><span>ظرفیت: ۲,۰۰۰</span></div>
-        <div class="presale-price">پیش‌قسط: ۱۵۰,۰۰۰,۰۰۰ تومان</div>
-        <button class="btn-presale" style="border-color:rgba(0,200,80,0.4);color:#40DD80" onclick="showNotif('اعلام آمادگی شما ثبت شد!','✅')">اعلام آمادگی</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PAYMENT SECTION -->
-<section class="payment-section reveal" id="payment">
-  <div class="payment-banner">
-    <div style="position:relative">
-      <div class="payment-title">💎 پرداخت ارزی با <span style="color:#60CCFF">تون‌کوین</span></div>
-      <p class="payment-desc">
-        با استفاده از شبکه TON Blockchain، اکنون می‌توانید خودروی ایرانی خود را با ارز دیجیتال معتبر خریداری کنید. امن، سریع و بدون کارمزد اضافه.
-      </p>
-      <div class="payment-features">
-        <div class="payment-feature">
-          <div class="pf-icon">🔒</div>
-          <div class="pf-text">پرداخت امن و رمزنگاری‌شده با بلاک‌چین TON</div>
-        </div>
-        <div class="payment-feature">
-          <div class="pf-icon">⚡</div>
-          <div class="pf-text">تسویه آنی در کمتر از ۳ ثانیه</div>
-        </div>
-        <div class="payment-feature">
-          <div class="pf-icon">🌍</div>
-          <div class="pf-text">قابل استفاده برای ایرانیان خارج از کشور</div>
-        </div>
-        <div class="payment-feature">
-          <div class="pf-icon">💱</div>
-          <div class="pf-text">تبدیل خودکار نرخ لحظه‌ای به تومان</div>
-        </div>
-        <div class="payment-feature">
-          <div class="pf-icon">🎁</div>
-          <div class="pf-text">۳٪ تخفیف اضافه برای پرداخت با TON</div>
-        </div>
-      </div>
-    </div>
-    <div class="ton-widget" style="position:relative">
-      <div class="ton-header">
-        <div class="ton-logo">TON</div>
-        <div class="ton-header-text">
-          <h3>درگاه پرداخت TON</h3>
-          <p>پرداخت ارزی ایران خودرو</p>
-        </div>
-      </div>
-      <div class="ton-rate-display">
-        <div class="ton-rate-label">نرخ لحظه‌ای TON</div>
-        <div class="ton-rate-value" id="tonRate">۱ TON = ۲۹۸,۵۰۰ تومان</div>
-      </div>
-      <div class="ton-input-group">
-        <div class="ton-input-label">مبلغ به تومان</div>
-        <input class="ton-input" type="text" placeholder="مثال: ۸۵۰,۰۰۰,۰۰۰" id="tomInput" oninput="calcTon(this.value)" style="text-align:right">
-      </div>
-      <div class="ton-input-group">
-        <div class="ton-input-label">معادل تون‌کوین</div>
-        <input class="ton-input" type="text" id="tonOutput" placeholder="۰.۰۰ TON" readonly style="color:#60CCFF;text-align:right">
-      </div>
-      <div class="ton-input-group">
-        <div class="ton-input-label">آدرس کیف پول TON</div>
-        <input class="ton-input" type="text" placeholder="EQ... آدرس کیف پول خود را وارد کنید" style="text-align:left;direction:ltr;font-size:0.8rem">
-      </div>
-      <button class="btn-ton-pay" onclick="showNotif('اتصال به کیف پول TON...','💎')">
-        <span>💎</span>
-        <span>اتصال و پرداخت با TON Wallet</span>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="features-section reveal">
-  <h2 class="section-title" style="margin-bottom:24px">✨ چرا ایران خودرو <span>آنلاین</span>؟</h2>
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">🏭</div>
-      <div class="feature-title">مستقیم از کارخانه</div>
-      <div class="feature-desc">خرید بدون واسطه با قیمت کارخانه و ضمانت اصالت</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🛡️</div>
-      <div class="feature-title">ضمانت ۳ ساله</div>
-      <div class="feature-desc">گارانتی کامل کارخانه با پوشش تمام قطعات</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🚚</div>
-      <div class="feature-title">تحویل سراسری</div>
-      <div class="feature-desc">تحویل به تمام نقاط ایران در کمترین زمان ممکن</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">💳</div>
-      <div class="feature-title">اقساط بلندمدت</div>
-      <div class="feature-desc">پرداخت اقساطی تا ۶۰ ماه با سود مناسب</div>
-    </div>
-  </div>
-</section>
-
-<!-- Modal Login/Register -->
-<div id="authModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal('authModal')">&times;</span>
-        <div class="tab-buttons">
-            <button class="tab-btn active" id="loginTabBtn">ورود</button>
-            <button class="tab-btn" id="registerTabBtn">ثبت‌نام</button>
-        </div>
-        <div id="loginForm">
-            <div class="form-group"><input type="text" id="loginPhone" placeholder="شماره موبایل"></div>
-            <div class="form-group"><input type="password" id="loginPass" placeholder="رمز عبور"></div>
-            <button class="btn-primary-custom" style="width:100%;" onclick="handleLogin()">ورود به حساب</button>
-        </div>
-        <div id="registerForm" style="display:none;">
-            <div class="form-group"><input type="text" id="regName" placeholder="نام و نام خانوادگی"></div>
-            <div class="form-group"><input type="text" id="regPhone" placeholder="شماره موبایل"></div>
-            <div class="form-group"><input type="password" id="regPass" placeholder="رمز عبور"></div>
-            <button class="btn-primary-custom" style="width:100%;" onclick="handleRegister()">ثبت‌نام و ورود</button>
-        </div>
-    </div>
-</div>
-
-<!-- Cart Modal -->
-<div id="cartModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal('cartModal')">&times;</span>
-        <h2 style="margin-bottom:20px;">🛒 سبد خرید</h2>
-        <div id="cartItemsList" class="cart-items-list">سبد خرید شما خالی است</div>
-        <div class="cart-total" id="cartTotalAmount">جمع کل: ۰ تومان</div>
-        <button class="btn-primary-custom" style="width:100%; margin-top:20px;" onclick="checkout()">تکمیل خرید</button>
-        <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="closeModal('cartModal')">بستن</button>
-    </div>
-</div>
-
-<!-- Toast notif -->
-<div id="toastMsg" style="position:fixed; bottom:30px; left:30px; z-index:3000;"></div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <div class="header-logo">
-        <div class="logo-icon">IK</div>
+    <div class="hero-bg"></div>
+    <div class="hero-content">
         <div>
-          <div class="logo-text">ایران خودرو</div>
-          <div class="logo-sub">IRAN KHODRO CO.</div>
+            <div class="hero-badge"><span>🔥</span> جشنواره تابستانی ۱۴۰۵ فعال است</div>
+            <h1 class="hero-title">فروشگاه رسمی<br><span class="accent">ایران خودرو</span><br><span class="gold">با قیمت استثنایی</span></h1>
+            <p class="hero-desc">خرید مستقیم از کارخانه با ضمانت اصالت کالا، امکان پرداخت با تون‌کوین و پیش‌فروش اقساطی با تخفیف‌های ویژه</p>
+            <div>
+                <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">مشاهده محصولات</button>
+                <button class="btn-secondary" onclick="document.getElementById('payment').scrollIntoView({behavior:'smooth'})">پرداخت با TON</button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><div class="stat-num">۲۰<span>+</span></div><div class="stat-label">مدل خودرو</div></div>
+                <div class="stat"><div class="stat-num">۵۰<span>K+</span></div><div class="stat-label">مشتری راضی</div></div>
+                <div class="stat"><div class="stat-num">۱۵<span>%</span></div><div class="stat-label">تخفیف تابستانی</div></div>
+                <div class="stat"><div class="stat-num">TON</div><div class="stat-label">پرداخت ارزی</div></div>
+            </div>
         </div>
-      </div>
-      <p>ایران خودرو با بیش از ۵۵ سال سابقه، بزرگ‌ترین خودروساز ایران و یکی از معتبرترین برندهای خودروسازی خاورمیانه است.</p>
-      <div class="social-links">
-        <div class="social-btn" onclick="showNotif('اینستاگرام ایران خودرو','📸')">📸</div>
-        <div class="social-btn" onclick="showNotif('تلگرام ایران خودرو','✈️')">✈️</div>
-        <div class="social-btn" onclick="showNotif('توییتر ایران خودرو','🐦')">🐦</div>
-        <div class="social-btn" onclick="showNotif('یوتوب ایران خودرو','▶️')">▶️</div>
-      </div>
+        <div class="hero-car-card">
+            <div class="car-display">🚗</div>
+            <div class="car-name">پژو پارس سال</div>
+            <div class="car-specs"><span class="car-spec">۱۶۰۰ سی‌سی</span><span class="car-spec">دستی</span><span class="car-spec">بنزینی</span></div>
+            <div class="car-price" id="heroPrice">۱,۸۵۰,۰۰۰,۰۰۰ تومان</div>
+            <div class="car-price-old">۲,۰۰۰,۰۰۰,۰۰۰ تومان</div>
+            <div class="discount-badge">-۱۵٪ تخفیف ویژه</div>
+        </div>
     </div>
-    <div class="footer-col">
-      <h4>محصولات</h4>
-      <ul>
-        <li><a href="#">سواری‌ها</a></li>
-        <li><a href="#">شاسی‌بلندها</a></li>
-        <li><a href="#">خودروهای برقی</a></li>
-        <li><a href="#">وانت و کامیونت</a></li>
-        <li><a href="#">قطعات یدکی</a></li>
-      </ul>
+</section>
+
+<section class="products-section reveal" id="products">
+    <h2 class="section-title">🚗 محصولات <span>ایران خودرو</span></h2>
+    <div class="products-tabs" id="tabsContainer">
+        <button class="tab active" data-cat="all">همه</button>
+        <button class="tab" data-cat="sedan">سواری</button>
+        <button class="tab" data-cat="suv">شاسی‌بلند</button>
+        <button class="tab" data-cat="hatch">هاچ‌بک</button>
+        <button class="tab" data-cat="electric">برقی</button>
     </div>
-    <div class="footer-col">
-      <h4>خدمات</h4>
-      <ul>
-        <li><a href="#">پیش‌فروش</a></li>
-        <li><a href="#">بیمه و ضمانت</a></li>
-        <li><a href="#">نمایندگی‌ها</a></li>
-        <li><a href="#">سرویس و نگهداری</a></li>
-        <li><a href="#">پرداخت ارزی TON</a></li>
-      </ul>
+    <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<section class="presale-section reveal" id="presale">
+    <div class="presale-banner">
+        <h2 class="section-title">📋 پیش‌فروش ویژه <span>۱۴۰۵</span></h2>
+        <div class="presale-grid" id="presaleGrid"></div>
     </div>
-    <div class="footer-col">
-      <h4>پشتیبانی</h4>
-      <ul>
-        <li><a href="#">راهنمای خرید</a></li>
-        <li><a href="#">سوالات متداول</a></li>
-        <li><a href="#">تماس با ما</a></li>
-        <li><a href="#">شکایات</a></li>
-        <li><a href="#">درباره ما</a></li>
-      </ul>
+</section>
+
+<section class="payment-section reveal" id="payment">
+    <div class="payment-banner">
+        <div>
+            <h2 class="section-title">💎 پرداخت ارزی با <span style="color:#60CCFF">تون‌کوین</span></h2>
+            <p style="color:var(--gray); line-height:1.8">با استفاده از شبکه TON Blockchain، خودروی خود را با ارز دیجیتال خریداری کنید. امن، سریع و بدون کارمزد اضافه.</p>
+            <div class="payment-features" id="paymentFeatures"></div>
+        </div>
+        <div class="ton-widget">
+            <div class="ton-header"><div class="ton-logo">TON</div><div><h3>درگاه پرداخت TON</h3><p>پرداخت ارزی ایران خودرو</p></div></div>
+            <div class="ton-rate-value" id="tonRate">در حال دریافت نرخ...</div>
+            <div class="ton-input-group"><div>مبلغ به تومان</div><input type="text" class="ton-input" id="tomanAmount" placeholder="مثال: 850,000,000" oninput="calculateTon()"></div>
+            <div class="ton-input-group"><div>معادل تون‌کوین</div><input type="text" class="ton-input" id="tonAmount" placeholder="۰.۰۰ TON" readonly></div>
+            <div class="ton-input-group"><div>آدرس کیف پول TON (دریافت)</div><input type="text" class="ton-input" id="walletAddress" placeholder="EQ... آدرس کیف پول خود را وارد کنید"></div>
+            <button class="btn-ton-pay" onclick="payWithTon()">💎 اتصال و پرداخت با TON</button>
+        </div>
     </div>
-  </div>
-  <div class="footer-bottom">
-    <div>© ۱۴۰۵ ایران خودرو. تمام حقوق محفوظ است.</div>
-    <div style="display:flex;gap:20px">
-      <span>حریم خصوصی</span>
-      <span>شرایط استفاده</span>
-      <span style="color:#60CCFF">💎 TON Payments Enabled</span>
+</section>
+
+<section class="features-section reveal" id="features">
+    <h2 class="section-title">✨ چرا ایران خودرو <span>آنلاین</span>؟</h2>
+    <div class="features-grid" id="featuresGrid"></div>
+</section>
+
+<footer id="contact">
+    <div class="footer-grid">
+        <div class="footer-col"><div class="logo-icon" style="margin-bottom:15px">IK</div><p style="color:var(--gray); font-size:0.85rem">بزرگ‌ترین خودروساز خاورمیانه با بیش از ۵۵ سال سابقه.</p><div class="social-links" id="socialLinks"></div></div>
+        <div class="footer-col"><h4>محصولات</h4><ul><li><a onclick="scrollToSection('products')">سواری‌ها</a></li><li><a onclick="scrollToSection('products')">شاسی‌بلندها</a></li><li><a onclick="scrollToSection('products')">خودروهای برقی</a></li></ul></div>
+        <div class="footer-col"><h4>خدمات</h4><ul><li><a onclick="scrollToSection('presale')">پیش‌فروش</a></li><li><a onclick="scrollToSection('payment')">پرداخت ارزی TON</a></li><li><a href="#" id="guaranteeLink">ضمانتنامه</a></li></ul></div>
+        <div class="footer-col"><h4>پشتیبانی</h4><ul><li><a href="#" id="aboutLink">درباره ما</a></li><li><a href="#" id="contactUsLink">تماس با ما</a></li><li><a href="#" id="faqLink">سوالات متداول</a></li></ul></div>
     </div>
-  </div>
+    <div class="footer-bottom"><div>© ۱۴۰۵ ایران خودرو. تمام حقوق محفوظ است.</div><div>💎 TON Payments Enabled</div></div>
 </footer>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closePurchaseModal()">✕</button>
-    <div class="modal-title">تکمیل خرید</div>
-    <div class="modal-car-preview">
-      <div class="modal-car-emoji" id="modalEmoji">🚗</div>
-      <div class="modal-car-info">
-        <h3 id="modalName"> پژو پارس سال</h3>
-        <p>ایران خودرو</p>
-        <div class="modal-price" id="modalPrice">۱,۸۵۰,۰۰۰,۰۰۰ تومان</div>
-      </div>
-    </div>
-    <div style="font-size:0.85rem;color:var(--gray);margin-bottom:12px;font-weight:600">انتخاب روش پرداخت:</div>
-    <div class="payment-methods">
-      <div class="payment-method selected" onclick="selectPayment(this)">
-        <span class="pm-icon">🏦</span>
-        <div><div class="pm-name">درگاه بانکی (شاپرک)</div><div class="pm-desc">پرداخت آنلاین از طریق تمام بانک‌های ایران</div></div>
-      </div>
-      <div class="payment-method ton-method" onclick="selectPayment(this)">
-        <span class="pm-icon">💎</span>
-        <div><div class="pm-name">پرداخت با TON Coin</div><div class="pm-desc">پرداخت ارزی + ۳٪ تخفیف اضافه</div></div>
-      </div>
-      <div class="payment-method" onclick="selectPayment(this)">
-        <span class="pm-icon">🏧</span>
-        <div><div class="pm-name">اقساط بانکی</div><div class="pm-desc">تا ۶۰ ماه با سود ۱۸٪</div></div>
-      </div>
-    </div>
-    <button class="btn-confirm-pay" onclick="confirmPurchase()">تأیید و ادامه پرداخت ←</button>
-  </div>
-</div>
+<!-- مودال‌ها -->
+<div id="authModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('authModal')">&times;</span><h3 style="text-align:center">👤 ورود | ثبت‌نام</h3><div class="tab-buttons"><button class="tab-btn active" id="loginTabBtn">ورود</button><button class="tab-btn" id="registerTabBtn">ثبت‌نام</button></div><div id="loginForm"><input type="email" id="loginEmail" placeholder="ایمیل"><input type="password" id="loginPassword" placeholder="رمز عبور"><button class="modal-btn modal-btn-primary" onclick="handleLogin()">ورود</button></div><div id="registerForm" style="display:none"><input type="text" id="regName" placeholder="نام کامل"><input type="email" id="regEmail" placeholder="ایمیل"><input type="text" id="regPhone" placeholder="موبایل"><input type="password" id="regPassword" placeholder="رمز (حداقل ۶ کاراکتر)"><button class="modal-btn modal-btn-primary" onclick="handleRegister()">ثبت‌نام</button></div></div></div>
 
-<!-- NOTIFICATION -->
-<div class="notification" id="notification">
-  <span class="notif-icon" id="notifIcon">✅</span>
-  <span class="notif-text" id="notifText">عملیات موفق بود</span>
-</div>
-<script src="js/script.js"></script>
+<div id="cartModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('cartModal')">&times;</span><h3>🛒 سبد خرید</h3><div id="cartItemsList" class="cart-items-list"></div><div id="cartTotalDisplay" class="cart-total"></div><button class="modal-btn modal-btn-primary" onclick="checkout()">✅ تکمیل خرید</button><button class="modal-btn modal-btn-secondary" onclick="closeModal('cartModal')">بستن</button></div></div>
+
+<div id="simpleModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('simpleModal')">&times;</span><div id="simpleModalBody"></div><button class="modal-btn modal-btn-secondary" onclick="closeModal('simpleModal')">بستن</button></div></div>
+
+<div id="notification" class="notification"><span class="notif-icon" id="notifIcon">✅</span><span class="notif-text" id="notifText"></span></div>
+
+<script>
+// ========== CONFIG ==========
+const SUPABASE_URL = 'https://czvkjxphrmlnizrlqaws.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6dmtqeHBocm1sbml6cmxxYXdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNjc0OTQsImV4cCI6MjA5Njc0MzQ5NH0.DpkQeIMEX-MHGy33I2NAgPVbtCkMRwMz9SgKVDrnX-o';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const STORE_WALLET = 'UQCpm9nRpvM3V7TGr5TUV8LKw2la-hYXKhP-txV_AjEW2mjq';
+let currentUser = null;
+let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+let currentTonRate = 298500;
+let activeCategory = 'all';
+
+// ========== HELPERS ==========
+function showNotif(text, icon = '✅') { 
+    const n = document.getElementById('notification');
+    document.getElementById('notifText').innerText = text;
+    document.getElementById('notifIcon').innerHTML = icon;
+    n.classList.add('show');
+    setTimeout(() => n.classList.remove('show'), 3000);
+}
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+
+// ========== TICKER ==========
+const tickerMessages = ['☀️ جشنواره تابستانی: تخفیف تا ۱۵٪', '💎 پرداخت با TON Coin', '🚗 تارا الکتریک پیش‌فروش', '🎁 ارسال رایگان', '🛡️ گارانتی ۳ ساله'];
+function initTicker() { 
+    const ticker = document.getElementById('tickerInner');
+    if(ticker) ticker.innerHTML = [...tickerMessages, ...tickerMessages].map(m => `<span class="ticker-item">${m} <span class="ticker-sep">●</span></span>`).join('');
+}
+initTicker();
+
+// ========== PRODUCTS DATA ==========
+const productsData = [
+    { id: 1, name: 'پژو پارس سال', name_en: 'Pars TU5', price: 1850000000, discount: 15, category: 'sedan', specs: ['۱۶۰۰ سی‌سی', 'دستی'], image: '🚗' },
+    { id: 2, name: 'پژو ۲۰۷ اتوماتیک', name_en: '207 Auto', price: 1850000000, discount: 15, category: 'sedan', specs: ['۱۵۰۰ سی‌سی', 'اتوماتیک'], image: '🚙' },
+    { id: 3, name: 'دنا پلاس توربو', name_en: 'Dena Plus Turbo', price: 2100000000, discount: 10, category: 'suv', specs: ['۱۶۵۰ توربو', 'اتوماتیک'], image: '🚐' },
+    { id: 4, name: 'پژو ۴۰۵ SLX', name_en: '405 SLX', price: 1400000000, discount: 7, category: 'sedan', specs: ['۱۸۰۰ سی‌سی', 'دستی'], image: '🏎️' },
+    { id: 5, name: 'رانا پلاس', name_en: 'Rana Plus', price: 1550000000, discount: 5, category: 'hatch', specs: ['۱۵۰۰ سی‌سی', 'اتوماتیک'], image: '🚕' },
+    { id: 6, name: 'تارا الکتریک', name_en: 'Tara Electric', price: 2300000000, discount: 14, category: 'electric', specs: ['برقی', '۴۵۰ کیلومتر'], image: '⚡', isPreorder: true }
+];
+
+function loadProducts() {
+    const grid = document.getElementById('productsGrid');
+    if(!grid) return;
+    grid.innerHTML = productsData.map(p => {
+        const finalPrice = p.price * (100 - p.discount) / 100;
+        const tonAmount = (finalPrice / currentTonRate).toFixed(2);
+        return `<div class="product-card" data-cat="${p.category}">
+            <div class="product-img"><div class="product-badges">${p.discount ? `<span class="badge badge-sale">${p.discount}%</span>` : ''}${p.isPreorder ? '<span class="badge badge-pre">پیش‌فروش</span>' : ''}</div>${p.image}</div>
+            <div class="product-info"><div class="product-name">${p.name}</div><div class="product-eng">${p.name_en}</div>
+            <div class="product-specs">${p.specs.map(s=>`<span class="spec-tag">${s}</span>`).join('')}</div>
+            <div class="price-main">${finalPrice.toLocaleString()} تومان</div>${p.discount?`<div class="price-old">${p.price.toLocaleString()} تومان</div>`:''}
+            <div class="ton-price">💎 ≈ ${tonAmount} TON</div>
+            <button class="btn-buy" onclick="addToCart(${p.id}, '${p.name}', ${finalPrice})">${p.isPreorder ? 'ثبت پیش‌فروش' : 'خرید'}</button></div></div>`;
+    }).join('');
+    filterProducts(activeCategory);
+}
+
+function filterProducts(category) {
+    activeCategory = category;
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.style.display = (category === 'all' || card.dataset.cat === category) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.tab[data-cat="${category}"]`).classList.add('active');
+}
+
+// ========== CART ==========
+function updateCartBadge() { document.getElementById('cartBadge').innerText = cart.reduce((s,i)=> s + (i.quantity||1), 0); }
+function addToCart(id, name, price) {
+    let existing = cart.find(i => i.id === id);
+    if(existing) existing.quantity = (existing.quantity||1)+1;
+    else cart.push({ id, name, price, quantity: 1 });
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartBadge();
+    renderCart();
+    showNotif(`${name} به سبد اضافه شد`, '🛒');
+}
+function renderCart() {
+    const container = document.getElementById('cartItemsList');
+    const totalContainer = document.getElementById('cartTotalDisplay');
+    if(!container) return;
+    if(!cart.length) { container.innerHTML = '<div class="empty-cart"><div>🛒</div><div>سبد خرید خالی است</div></div>'; if(totalContainer) totalContainer.innerHTML=''; return; }
+    let total = 0;
+    container.innerHTML = cart.map((item, idx) => {
+        const qty = item.quantity||1;
+        const itemTotal = item.price * qty;
+        total += itemTotal;
+        return `<div class="cart-item"><div><div>${item.name}</div><div class="cart-item-price">${item.price.toLocaleString()} تومان</div></div>
+        <div class="cart-item-actions"><button class="cart-qty-btn" onclick="changeQuantity(${idx}, -1)">-</button><span>${qty}</span>
+        <button class="cart-qty-btn" onclick="changeQuantity(${idx}, 1)">+</button><button class="cart-remove-btn" onclick="removeFromCart(${idx})">حذف</button></div>
+        <div>${itemTotal.toLocaleString()} تومان</div></div>`;
+    }).join('');
+    if(totalContainer) totalContainer.innerHTML = `<span>جمع کل:</span> ${total.toLocaleString()} تومان`;
+}
+function changeQuantity(idx, delta) {
+    let newQty = (cart[idx].quantity||1) + delta;
+    if(newQty <= 0) cart.splice(idx,1);
+    else cart[idx].quantity = newQty;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartBadge();
+    renderCart();
+}
+function removeFromCart(idx) { cart.splice(idx,1); localStorage.setItem('cart', JSON.stringify(cart)); updateCartBadge(); renderCart(); }
+async function checkout() {
+    if(!currentUser) { showNotif('لطفاً وارد شوید', '👤'); closeModal('cartModal'); openModal('authModal'); return; }
+    if(!cart.length) { showNotif('سبد خالی است', '⚠️'); return; }
+    const total = cart.reduce((s,i)=> s + (i.price * (i.quantity||1)), 0);
+    try {
+        const { data, error } = await supabase.from('orders').insert([{ user_id: currentUser.id, total_amount: total, status: 'pending', payment_status: 'unpaid' }]).select();
+        if(error) throw error;
+        for(let item of cart) await supabase.from('order_items').insert([{ order_id: data[0].id, product_name: item.name, quantity: item.quantity||1, price: item.price }]);
+        showNotif(`سفارش ${data[0].id} ثبت شد`, '✅');
+        cart = []; localStorage.setItem('cart', '[]'); updateCartBadge(); renderCart(); closeModal('cartModal');
+    } catch(e) { showNotif(e.message, '❌'); }
+}
+
+// ========== TON & AUTH ==========
+async function fetchTonRate() {
+    try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd');
+        const data = await res.json();
+        const tonUsd = data['the-open-network']?.usd || 2.5;
+        currentTonRate = tonUsd * 60000;
+        document.getElementById('tonRate').innerHTML = `۱ TON ≈ ${currentTonRate.toLocaleString()} تومان`;
+        loadProducts(); // refresh TON prices
+    } catch(e) { console.error(e); document.getElementById('tonRate').innerHTML = `۱ TON ≈ ۲۹۸,۵۰۰ تومان`; }
+}
+function calculateTon() {
+    let toman = parseFloat(document.getElementById('tomanAmount').value.replace(/,/g, ''));
+    if(!isNaN(toman) && toman>0) document.getElementById('tonAmount').value = (toman / currentTonRate).toFixed(4) + ' TON';
+    else document.getElementById('tonAmount').value = '';
+}
+async function payWithTon() {
+    if(!currentUser) { showNotif('ابتدا وارد شوید', '👤'); openModal('authModal'); return; }
+    let toman = parseFloat(document.getElementById('tomanAmount').value.replace(/,/g, ''));
+    let wallet = document.getElementById('walletAddress').value;
+    if(!toman || toman<=0) { showNotif('مبلغ را وارد کنید', '⚠️'); return; }
+    if(!wallet) { showNotif('آدرس کیف پول TON را وارد کنید', '⚠️'); return; }
+    let tonAmount = (toman / currentTonRate).toFixed(4);
+    showNotif(`لطفاً ${tonAmount} TON به آدرس ${STORE_WALLET} واریز کنید. پس از تأیید خودکار، سفارش ثبت می‌شود.`, '💎');
+    await supabase.from('ton_transactions').insert([{ id: crypto.randomUUID?.() || Date.now()+'-'+Math.random(), user_id: currentUser.id, amount_toman: toman, amount_ton: parseFloat(tonAmount), wallet_address: STORE_WALLET, status: 'pending' }]);
+}
+
+async function handleLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    if(!email || !password) { showNotif('ایمیل و رمز را وارد کنید', '⚠️'); return; }
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if(error) throw error;
+        currentUser = data.user;
+        localStorage.setItem('user', JSON.stringify(currentUser));
+        showNotif(`خوش آمدید ${currentUser.email?.split('@')[0]}`, '✅');
+        closeModal('authModal');
+        updateAuthUI();
+    } catch(e) { showNotif(e.message, '❌'); }
+}
+async function handleRegister() {
+    const name = document.getElementById('regName').value;
+    const email = document.getElementById('regEmail').value;
+    const phone = document.getElementById('regPhone').value;
+    const password = document.getElementById('regPassword').value;
+    if(!name || !email || !phone || !password) { showNotif('تمامی فیلدها الزامی است', '⚠️'); return; }
+    if(password.length<6) { showNotif('رمز حداقل ۶ کاراکتر', '⚠️'); return; }
+    try {
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { name, phone } } });
+        if(error) throw error;
+        currentUser = data.user;
+        showNotif('ثبت‌نام موفق!', '🎉');
+        closeModal('authModal');
+        updateAuthUI();
+    } catch(e) { showNotif(e.message, '❌'); }
+}
+async function logout() { await supabase.auth.signOut(); currentUser = null; localStorage.removeItem('user'); updateAuthUI(); showNotif('خارج شدید', '👋'); }
+function updateAuthUI() {
+    const btn = document.getElementById('btnLogin');
+    if(currentUser) { btn.innerText = `👤 ${currentUser.email?.split('@')[0]}`; btn.onclick = () => { if(confirm('خروج؟')) logout(); }; }
+    else { btn.innerText = 'ورود / ثبت‌نام'; btn.onclick = () => openModal('authModal'); }
+}
+
+// ========== PRELOAD & UI ==========
+function loadPresale() {
+    const presaleData = [
+        { name: 'تارا پلاس اتوماتیک', progress: 78, prePrice: '۱۰۰,۰۰۰,۰۰۰', status: 'در حال ثبت‌نام' },
+        { name: 'پژو پارس سال', progress: 35, prePrice: '۸۰,۰۰۰,۰۰۰', status: 'ثبت‌نام آزاد' },
+        { name: 'تارا الکتریک نسل ۲', progress: 5, prePrice: '۱۵۰,۰۰۰,۰۰۰', status: 'به زودی' }
+    ];
+    const grid = document.getElementById('presaleGrid');
+    if(grid) grid.innerHTML = presaleData.map(p => `<div class="presale-card"><div class="presale-car-img">🚗</div><div class="presale-car-name">${p.name}</div><div class="presale-status">${p.status}</div><div class="presale-progress"><div class="progress-fill" style="width:${p.progress}%"></div></div><div class="presale-price">پیش‌قسط: ${p.prePrice} تومان</div><button class="btn-presale" onclick="showNotif('ثبت‌نام پیش‌فروش انجام شد', '✅')">ثبت‌نام</button></div>`).join('');
+}
+function loadFeatures() {
+    const features = [
+        { icon:'🏭', title:'مستقیم از کارخانه', desc:'قیمت کارخانه و ضمانت اصالت' },
+        { icon:'🛡️', title:'ضمانت ۳ ساله', desc:'گارانتی کامل قطعات' },
+        { icon:'🚚', title:'تحویل سراسری', desc:'تحویل در سریعترین زمان' },
+        { icon:'💳', title:'اقساط بلندمدت', desc:'تا ۶۰ ماه' }
+    ];
+    const grid = document.getElementById('featuresGrid');
+    if(grid) grid.innerHTML = features.map(f => `<div class="feature-card"><div class="feature-icon">${f.icon}</div><div class="feature-title">${f.title}</div><div class="feature-desc">${f.desc}</div></div>`).join('');
+}
+function loadPaymentFeatures() {
+    const pf = document.getElementById('paymentFeatures');
+    if(pf) pf.innerHTML = `<div class="payment-feature"><div class="pf-icon">🔒</div><div>پرداخت امن بلاک‌چین</div></div><div class="payment-feature"><div class="pf-icon">⚡</div><div>تسویه آنی</div></div><div class="payment-feature"><div class="pf-icon">🌍</div><div>قابل استفاده برای ایرانیان خارج از کشور</div></div><div class="payment-feature"><div class="pf-icon">💱</div><div>نرخ لحظه‌ای</div></div>`;
+}
+function loadSocial() {
+    const socialDiv = document.getElementById('socialLinks');
+    if(socialDiv) socialDiv.innerHTML = `<div class="social-btn" onclick="showNotif('اینستاگرام IKCO','📸')">📸</div><div class="social-btn" onclick="showNotif('تلگرام IKCO','✈️')">✈️</div><div class="social-btn" onclick="showNotif('توییتر IKCO','🐦')">🐦</div>`;
+}
+function openInfoModal(title, content) {
+    document.getElementById('simpleModalBody').innerHTML = `<h3>${title}</h3><p>${content}</p>`;
+    openModal('simpleModal');
+}
+function setupFooterLinks() {
+    document.getElementById('aboutLink')?.addEventListener('click', (e) => { e.preventDefault(); openInfoModal('درباره ایران خودرو', 'ایران خودرو بزرگترین خودروساز خاورمیانه با بیش از ۵۵ سال تجربه، تولیدکننده خودروهای با کیفیت و خدمات پس از فروش گسترده.'); });
+    document.getElementById('contactUsLink')?.addEventListener('click', (e) => { e.preventDefault(); openInfoModal('تماس با ما', 'شماره پشتیبانی: ۰۲۱-XXXXX\nایمیل: support@ikco.ir\nآدرس: تهران، خیابان آزادی'); });
+    document.getElementById('faqLink')?.addEventListener('click', (e) => { e.preventDefault(); openInfoModal('سوالات متداول', '۱. آیا پرداخت با TON امن است؟ بله.\n۲. گارانتی چند سال است؟ ۳ سال.\n۳. نحوه تحویل؟ ارسال به سراسر ایران.'); });
+    document.getElementById('guaranteeLink')?.addEventListener('click', (e) => { e.preventDefault(); openInfoModal('ضمانتنامه', 'گارانتی ۳ ساله یا ۱۰۰,۰۰۰ کیلومتر برای تمام خودروهای فروش رسمی.'); });
+}
+document.getElementById('homeLink')?.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); });
+document.querySelectorAll('.nav-link').forEach(link => { link.addEventListener('click', function(e){ e.preventDefault(); let target = this.getAttribute('href'); if(target && target!='#') scrollToSection(target.substring(1)); }); });
+document.getElementById('contactLink')?.addEventListener('click', (e) => { e.preventDefault(); scrollToSection('contact'); });
+document.getElementById('tabsContainer')?.addEventListener('click', (e) => { let btn = e.target.closest('.tab'); if(btn) filterProducts(btn.dataset.cat); });
+document.getElementById('loginTabBtn')?.addEventListener('click', () => { document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; document.getElementById('loginTabBtn').classList.add('active'); document.getElementById('registerTabBtn').classList.remove('active'); });
+document.getElementById('registerTabBtn')?.addEventListener('click', () => { document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; document.getElementById('registerTabBtn').classList.add('active'); document.getElementById('loginTabBtn').classList.remove('active'); });
+document.getElementById('cartBtn').onclick = () => { renderCart(); openModal('cartModal'); };
+
+// ========== INIT ==========
+window.addEventListener('load', async () => {
+    await fetchTonRate();
+    loadProducts();
+    loadPresale();
+    loadFeatures();
+    loadPaymentFeatures();
+    loadSocial();
+    setupFooterLinks();
+    updateCartBadge();
+    renderCart();
+    const { data: { user } } = await supabase.auth.getUser();
+    if(user) { currentUser = user; updateAuthUI(); }
+    setTimeout(() => document.getElementById('loader')?.classList.add('hidden'), 800);
+    const reveals = document.querySelectorAll('.reveal');
+    new IntersectionObserver(entries => entries.forEach(e => e.isIntersecting && e.target.classList.add('visible')), { threshold:0.1 }).observe(reveals);
+});
+window.filterProducts = filterProducts;
+window.addToCart = addToCart;
+window.changeQuantity = changeQuantity;
+window.removeFromCart = removeFromCart;
+window.checkout = checkout;
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.closeModal = closeModal;
+window.calculateTon = calculateTon;
+window.payWithTon = payWithTon;
+window.showNotif = showNotif;
+window.scrollToSection = scrollToSection;
+</script>
 </body>
 </html>
